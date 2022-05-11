@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="generator.css">
+	<script src="generator.js"></script>
+</head>
+<body>
+	<div id="editor">
+
+	<div class="song-textarea-box">
+	<textarea id="input-text">Example</textarea>
+	</div>
+
+	<div class="song-settings-box">
+		<h2>Song settings</h2>
+		<line></line>
+		<div class="settings"><label>Song Name:</label><input type="text" id="songName" value="Generated Song"></div>
+		<div class="settings" onfocus='this.size=10;' onblur='this.size=0;' onchange='this.size=1; this.blur();'><label>Key:</label><select id="songKey">
+			<option value="B">B</option>
+			<option value="A♯">A♯</option>
+			<option value="A">A</option>
+			<option value="G♯">G♯</option>
+			<option value="4">G</option>
+			<option value="F♯">F♯</option>
+			<option value="F">F</option>
+			<option value="E">E</option>
+			<option value="D♯">D♯</option>
+			<option value="D">D</option>
+			<option value="C♯">C♯</option>
+			<option value="C" selected>C</option>
+		</select></div>
+			<!-- <input type="text" id="songKey" value="C"></div> -->
+		<!-- <input type="number" id="songIntroBars" value="0"> -->
+		<!-- <input type="number" id="songIntroBars" value="0"> -->
+		<line class="gray"></line>
+		<div class="settings"><label>Beats Per Bar:</label><input type="number" id="songBeatsPerBar" value="8"></div>
+		<div class="settings"><label>Ticks Per Beat:</label><input type="number" id="songTicksPerBeat" value="4"></div>
+		<!-- <div class="settings"><label>Reverb:</label><input type="number" id="songReverb" value="50"></div> -->
+		<div class="settings"><label>Tick lenght:</label><input type="number" id="tickLenght" value="2"></div>
+		<line class="gray"></line>
+		<div class="settings"><label>Beats Per Minute:</label><input min="1" type="number" id="songBeatsPerMinute" value="150"></div>
+	</div>
+	<div class="song-file-box">
+		<button onclick="generate()">Export Song</button>
+		<button onclick="generate()" disabled>Load Settings</button>
+	</div>
+	</div>
+</body>
+</html>
