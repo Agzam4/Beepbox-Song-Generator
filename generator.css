@@ -1,25 +1,50 @@
+:root {
+	--color-bg: #000;
+	--color-bg-light: transparent;
+	--color-bg-lighter: transparent;
+	/*--color-bg-extralight: #555;*/
+
+	--color-fg-dark: transparent;
+	--color-fg: #000;
+	--color-fg-light: transparent;
+
+	--color-border: transparent;
+	--color-border-action: transparent;
+
+	--color-scrollbar: transparent;
+	--color-scrollbar-thumb: transparent;
+}
+
+
 html {
 	font-family: sans-serif;
-	background: #151515;
-	color: #EEE;
+	background: var(--color-bg);
+	color: var(--color-fg);
+	transition: background .2s ease-in-out, color .2s ease-in-out;
 }
 
 body {
 	margin: 0;
-	/*font-size: 3vh;*/
+}
+
+*::-webkit-scrollbar {
+   	width: .5vw;
+   	background-color: var(--color-scrollbar);
+   	box-shadow: inset 0px 0px 3px 0px #000000a1;
+}
+*::-webkit-scrollbar-track {
+}
+*::-webkit-scrollbar-thumb {
+   	background: var(--color-scrollbar-thumb);
 }
 
 input, button, textarea, select {
 	font-family: monospace;
 	outline: none;
-	background: #333;
-	color: #EEE;
+	background: var(--color-bg-light);
+	color: var(--color-fg);
 	padding: 10px 20px;
 	border: none;
-	/*border-top: 5px #333 dashed;
-	border-bottom: 5px #333 dashed;
-	border-left: 20px #333 dashed;
-	border-right: 20px #333 dashed;*/
   	transition: box-shadow .2s ease-in-out,
   				color .2s ease-in-out,
   				background .2s ease-in-out;
@@ -27,8 +52,8 @@ input, button, textarea, select {
 }
 
 input:hover, textarea:hover {
-    color: #FFF;
-	background: #444;
+    color: var(--color-fg-light);
+	background: var(--color-bg-lighter);
 }
 
 select, option {
@@ -36,16 +61,59 @@ select, option {
 }
 
 select:focus > option:checked { 
-    background: #444 !important;
+    background: var(--color-bg-lighter) !important;
 }
 
 input:focus, button:hover, select:hover {
-    color: #FFF;
-    box-shadow: 0 0 0 3px #555;
+    color: var(--color-fg-light);
+    box-shadow: 0 0 0 3px var(--color-border-action);
 }
 
 #editor {
 	height: 100vh;
+}
+
+#page {
+	margin: 1vh 1vw;
+}
+#page > p {
+	padding: 1vh 1vw;
+	line-height: 150%;
+}
+
+code {
+	display: inline-block;
+	background: var(--color-bg-light);
+	color: var(--color-fg-dark);
+	border-radius: 5px;
+	padding: 0px 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	font-size: calc(100% - 4px);
+	font-family: monospace;
+}
+
+p > description {
+	display: block;
+	margin: 0;
+	padding: 0;
+	margin-left: 1vw;
+}
+
+a {
+	text-decoration: none;
+	color: #3aa8ff;
+	transition: .3s ease-in-out;
+}
+
+a:hover {
+	color: #9ee1ff;
+	text-shadow: 0 0 5px #3aa8ff;
+}
+
+a:active {
+	color: var(--color-fg-light);
+	text-shadow: 0 0 5px 3px #9ee1ff;
 }
 
 .song-textarea-box {
@@ -56,7 +124,7 @@ input:focus, button:hover, select:hover {
 	top: 0;
     box-shadow: 0px 0px 3px 0px #00000080;
     border-radius: 5px;
-    border: 2px #333 solid;
+    border: 2px var(--color-border) solid;
     padding: 2vh 1vw;
     margin: 4vh 1vw;
 }
@@ -69,14 +137,14 @@ input:focus, button:hover, select:hover {
     font-size: 150%;
     margin: 0;
 
-    box-shadow: 0 0 0 3px #444;
+    box-shadow: 0 0 0 3px var(--color-border);
 
     border-radius: 5px;
 }
 
 textarea:focus {
-    color: #FFF;
-    box-shadow: 0 0 0 3px #555;
+    color: var(--color-fg-light);
+    box-shadow: 0 0 0 3px var(--color-border-action);
 }
 
 .song-settings-box {
@@ -85,13 +153,14 @@ textarea:focus {
 	width: 30vw;
 	right: 0;
 	top: 0;
-	border: 1px #000 solid;
 
     box-shadow: 0px 0px 3px 0px #00000080;
     border-radius: 5px;
-    border: 2px #333 solid;
+    border: 2px var(--color-border) solid;
     padding: 1vh 2vw;
     margin: 4vh 1vw;
+
+    overflow-y: auto;
 }
 
 .song-file-box {
@@ -103,7 +172,7 @@ textarea:focus {
 
     box-shadow: 0px 0px 3px 0px #00000080;
     border-radius: 5px;
-    border: 2px #333 solid;
+    border: 2px var(--color-border) solid;
     padding: 1vh 2vw;
     margin: 2vh 1vw;
 }
@@ -119,7 +188,7 @@ textarea:focus {
 }
 
 h2 {
-    margin: 4vh 1vw;
+    margin: 4vh 1vw 1vh 1vw;
     padding: 0;
 }
 
@@ -128,7 +197,7 @@ line {
     display: block;
     width: 100%;
     height: 2px;
-    background: #FFF;
+    background: var(--color-fg-light);
     border-radius: 5px;
 }
 
@@ -146,15 +215,11 @@ line.gray {
 }
 
 .settings > input, select {
-	/*float: right;*/
 	display: inline-flex;
 	justify-content: flex-end;
 	width: calc(12vw - 26px);
 	padding: 1vh 2vw;
 	margin: 0;
-
- /*   margin-left: 0.4em;
-    vertical-align: middle;*/
 }
 
 select {
@@ -164,12 +229,64 @@ select {
 .settings > label {
 	display: inline-block;
 	justify-content: flex-end;
-	width: 14vw;
+	width: 13.5vw;
 }
 
-button:disabled {
+label, h2, button, div, option {
+	user-select: none !important;
+}
+
+*:disabled {
 	filter: opacity(25%) contrast(50%);
 }
-button:disabled:hover {
+*:disabled:hover {
 	box-shadow: none;
+}
+input:disabled:hover  {
+	background: var(--color-bg-light);
+}
+
+
+/*
+	===================
+		T H E M E S		
+	===================
+*/
+
+
+
+
+.theme-select {
+	display: inline-block;
+	border-width: 2px;
+}
+
+/* Dark */
+.theme-select.theme-dark {
+	color: #FFF;
+	background: #151515;
+	border-color: #333;
+}
+.theme-select.theme-dark:focus {
+	box-shadow: 0 0 0 3px #151515;
+}
+
+/* Light */
+.theme-select.theme-light {
+	color: #151515;
+	background: #EEE;
+	border-color: #333;
+}
+.theme-select.theme-light:focus {
+	box-shadow: 0 0 0 3px #555;
+}
+
+/* Blue */
+.theme-select.theme-blue {
+	color: #AAF;
+	background: #0d1117;
+	border-color: #161b22;
+}
+.theme-select.theme-blue:focus {
+	box-shadow: 0 0 0 3px #555;
 }

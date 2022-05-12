@@ -6,6 +6,7 @@
 	<title></title>
 	<link rel="stylesheet" type="text/css" href="generator.css">
 	<script src="generator.js"></script>
+	<script src="theme.js"></script>
 </head>
 <body>
 	<div id="editor">
@@ -18,7 +19,7 @@
 		<h2>Song settings</h2>
 		<line></line>
 		<div class="settings"><label>Song Name:</label><input type="text" id="songName" value="Generated Song"></div>
-		<div class="settings" onfocus='this.size=10;' onblur='this.size=0;' onchange='this.size=1; this.blur();'><label>Key:</label><select id="songKey">
+		<div class="settings"><label>Key:</label><select id="songKey">
 			<option value="B">B</option>
 			<option value="A♯">A♯</option>
 			<option value="A">A</option>
@@ -42,11 +43,64 @@
 		<div class="settings"><label>Tick lenght:</label><input type="number" id="tickLenght" value="2"></div>
 		<line class="gray"></line>
 		<div class="settings"><label>Beats Per Minute:</label><input min="1" type="number" id="songBeatsPerMinute" value="150"></div>
+
+
+		<h2>Generator settings</h2>
+		<line></line>
+		<div class="settings"><label>Scale:</label><select id="generatorScale">
+			<option value="Free">Free</option>
+			<option value="Major">Major</option>
+			<option value="Minor">Minor</option>
+		</select></div>
+		<div class="settings"><label>Generatin type:</label><select id="generatorType">
+			<option value="MCG-KC">MCG-KC</option>
+			<option value="Soon" disabled>Soon</option>
+		</select></div>
+		<div class="settings"><label>Repeat letter pattern:</label><input type="number" min="1" id="generatorRepeatPattern" value="1"></div>
 	</div>
 	<div class="song-file-box">
 		<button onclick="generate()">Export Song</button>
 		<button onclick="generate()" disabled>Load Settings</button>
 	</div>
+	</div>
+	<div id="page">
+	<h2>Editor Settings</h2>
+	<line></line>
+	<p>Theme: </p>
+	<button onclick="theme('default')" 	class="theme-select">Browser-theme</button>
+	<button onclick="theme('dark')" 	class="theme-select theme-dark">Dark</button>
+	<button onclick="theme('light')" 	class="theme-select theme-light">Light</button>
+	<!-- <button onclick="theme('sky')" 	class="theme-select theme-blue">Sky</button> -->
+
+	<p>Cookies & Local storage: </p>
+	<button onclick="localStorage.clear()">Clear "Local storage"</button>
+
+	<h2>How to export</h2>
+	<line></line>
+	<p>
+		1. Click <code>Export Song</code>(A JSON file will be downloaded to the computer)<br>
+		2. Open <a href="https://www.beepbox.co/">Beepbox</a><br>
+		3. Click <code>File >> Import song</code> or <code>Ctrl + O</code><br>
+		4. Choose the downloaded JSON file
+	</p>
+
+
+	<h2>Generating types</h2>
+	<line></line>
+	<p>
+		<b>MCG-KC</b> - Morse code generator key code.
+		<description>Key: remainder of the division character key code on keys count
+		<br>Note Lenght: taking a morse code: "-" is double, "." is single</description>
+		<br><line class="gray"></line>
+	</p>
+	<h2>About</h2>
+	<line></line>
+	<p>
+	Music generator for 
+	<a href="https://www.beepbox.co/">Beepbox</a> and beepbox-mods like <a href="https://jummbus.bitbucket.io/">Jummbus</a>
+	<br><br><br>
+	<label style="color: #555">by Agzam</label>
+	</p>
 	</div>
 </body>
 </html>

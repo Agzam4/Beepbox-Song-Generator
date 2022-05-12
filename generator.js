@@ -1,6 +1,9 @@
 const morseChars = `1234567890QWERTYUIOPASDFGHJKLZXCVBNM!@$&()_+-=:;'"/.?`;
 const morseCharsEncode = `.---- ..--- ...-- ....- ..... -.... --... ---.. ----. ----- --.- .-- . .-. - -.-- ..- .. --- .--. .- ... -.. ..-. --. .... .--- -.- .-.. --.. -..- -.-. ...- -... -. -- -.-.-- .--.-. ...-..- .-... -.--. -.--.- ..--.- .-.-. -....- -...- ---... -.-.-. .----. .-..-. -..-. .-.-.- ..--..`.split(" ");
 
+let generatorRepeatPattern = 1; 
+let generatorScale = 0; 
+
 let songStartKey = 48;
 
 let songName = "Generated Song";
@@ -15,6 +18,12 @@ let tickLenght = 2;
 
 let songNotes = [48, 49, 50];
 
+let scaleKeys = [
+[12,11,10,9,8,7,6,5,4,3,2,1],
+[11, 9, 7, 6, 4, 2, 1],
+[11, 10, 8, 6, 4, 3, 1]
+];
+
 window.onload = function() {
     document.title = `BeepBox Song Generator | "` + songName + `"`;
     document.getElementById('songName').oninput = function() {
@@ -27,6 +36,9 @@ window.onload = function() {
     document.getElementById('songBeatsPerMinute').oninput = function() {songBeatsPerMinute = this.value};
     // document.getElementById('songReverb').oninput = function() {songReverb = this.value};
     document.getElementById('tickLenght').oninput = function() {updateTickLenght()};
+
+    document.getElementById('generatorRepeatPattern').oninput = function() { generatorRepeatPattern = this.value};
+    document.getElementById('generatorScale').onchange = function() {generatorScale = this.selectedIndex};
 }
 
 function updateKey() {
@@ -69,6 +81,7 @@ function updateTickLenght() {
 }
 
 function generate() {
+    console.log("generatorRepeatPattern", generatorRepeatPattern);
     console.log("Generating...");
     let text = document.getElementById('input-text').value.toUpperCase();
     songNotes = [];
@@ -77,16 +90,18 @@ function generate() {
         let char = text.charAt(i);
         let charIndex = morseChars.indexOf(char);
         if(charIndex != -1) {
-            let charKey = char.charCodeAt(0)%12;
+            let charKey = char.charCodeAt(0)%scaleKeys[generatorScale].length;
             let morse = morseCharsEncode[charIndex];
             for (var j = 0; j < morse.length; j++) {
-                if(morse.charAt(j) == '.') {
-                    songNotes.push(charKey);
-                }else {
-                    songNotes.push(charKey);
-                    songNotes.push(charKey);
+                for (var repeat = 0; repeat < generatorRepeatPattern; repeat++) {
+                    if(morse.charAt(j) == '.') {
+                        songNotes.push(scaleKeys[generatorScale][charKey]);
+                    }else {
+                        songNotes.push(scaleKeys[generatorScale][charKey]);
+                        songNotes.push(scaleKeys[generatorScale][charKey]);
+                    }
+                    songNotes.push(null);
                 }
-                songNotes.push(null);
             }
         }
     }
