@@ -24,25 +24,101 @@ let scaleKeys = [
 [11, 10, 8, 6, 4, 3, 1]
 ];
 
+let display;
+
 window.onload = function() {
+    display = document.getElementById('display-canvas');
+
     document.title = `BeepBox Song Generator | "` + songName + `"`;
     document.getElementById('songName').oninput = function() {
         songName = this.value
         document.title = `BeepBox Song Generator | "` + songName + `"`;
     };
     document.getElementById('songKey').onchange = function() {songKey = this.options[this.selectedIndex].text};
-    document.getElementById('songBeatsPerBar').oninput = function() {songBeatsPerBar = this.value; updateTickLenght()};
-    document.getElementById('songTicksPerBeat').oninput = function() {songTicksPerBeat = this.value; updateTickLenght()};
+    document.getElementById('songBeatsPerBar').oninput = function() {songBeatsPerBar = Math.max(2, this.value); updateTickLenght()};
+    document.getElementById('songTicksPerBeat').oninput = function() {songTicksPerBeat = Math.max(2, this.value); updateTickLenght()};
     document.getElementById('songBeatsPerMinute').oninput = function() {songBeatsPerMinute = this.value};
     // document.getElementById('songReverb').oninput = function() {songReverb = this.value};
     document.getElementById('tickLenght').oninput = function() {updateTickLenght()};
 
     document.getElementById('generatorRepeatPattern').oninput = function() { generatorRepeatPattern = this.value};
     document.getElementById('generatorScale').onchange = function() {generatorScale = this.selectedIndex};
+    setInterval(updateDisplay, 100);
 }
 
 function updateKey() {
 
+}
+
+function updateDisplay() {
+    crateNotes();
+
+    let ticksPerBar = songTicksPerBeat*songBeatsPerBar;
+    let g = display.getContext('2d');
+    display.height = display.parentElement.offsetHeight;
+
+    let w = 20;
+    let barPadding = 10;
+    display.width = songNotes.length*w + ticksPerBar;
+
+    let width = display.width;
+    let height = display.height;
+
+    let h = height/15;
+
+    g.fillStyle = "#000";
+    g.fillRect(0, 0, width, height);
+
+    g.fillStyle = "#222";
+    g.fillRect(0, h, width, height-h*3);
+
+    g.fillStyle = "#25F3FF";
+    for (var i = 0; i < songNotes.length; i++) {
+        let note = songNotes[i];
+        if(note != null)
+        g.fillRect(w*i + Math.floor(i/ticksPerBar)*barPadding, h*(note), w, h);
+    }
+
+    g.strokeStyle = "#555";
+    g.beginPath();
+    for (var key = 1; key < 14; key++) {
+        g.moveTo(0, h*key);
+        g.lineTo(width, h*key);
+    }
+    g.stroke();
+
+    g.strokeStyle = "#777";
+    g.beginPath();
+    for (var i = 0; i < songNotes.length; i+=songTicksPerBeat) {
+        g.moveTo(w*i + Math.floor(i/ticksPerBar)*barPadding, h);
+        g.lineTo(w*i + Math.floor(i/ticksPerBar)*barPadding, height-2*h);
+    }
+    g.stroke();
+
+    g.strokeStyle = "#777";
+    g.beginPath();
+    g.font = "bold " + h*0.75 + "px Arial";
+    for (var i = 0; i < 1 + songNotes.length/ticksPerBar; i++) {
+        let x = i*ticksPerBar*w + (i-1)*barPadding;
+        g.fillStyle = "#000";
+        g.fillRect(x, h, barPadding, height-h*3);
+        g.moveTo(x, h);
+        g.lineTo(x, height-2*h);
+
+        g.fillStyle = "#555";
+        g.fillText(" Bar #" + i, x - ticksPerBar*w, h*1.75);
+        // g.moveTo(w*i + Math.floor(i/ticksPerBar)*barPadding, h);
+        // g.lineTo(w*i + Math.floor(i/ticksPerBar)*barPadding, height-2*h);
+    }
+    g.stroke();
+
+    // Scale
+
+    g.fillStyle = "#000000AA";
+    for (var i = 1; i <= 12; i++) {
+        if(scaleKeys[generatorScale].indexOf(i) == -1)
+        g.fillRect(0, i*h, width, h);
+    }
 }
 
 function updateTickLenght() {
@@ -80,12 +156,9 @@ function updateTickLenght() {
     //Math.round(songTicksPerBeat/tl.value)*tl.value/(songBeatsPerBar*songTicksPerBeat);
 }
 
-function generate() {
-    console.log("generatorRepeatPattern", generatorRepeatPattern);
-    console.log("Generating...");
+function crateNotes() {
     let text = document.getElementById('input-text').value.toUpperCase();
     songNotes = [];
-    console.log("Text length", text.length);
     for (var i = 0; i < text.length; i++) {
         let char = text.charAt(i);
         let charIndex = morseChars.indexOf(char);
@@ -105,7 +178,10 @@ function generate() {
             }
         }
     }
-    console.log(tickLenght);
+}
+
+function generate() {
+    crateNotes();
     exportSong();
 }
 

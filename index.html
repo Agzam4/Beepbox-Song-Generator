@@ -13,6 +13,7 @@
 	<div id="editor">
 
 	<div class="song-textarea-box">
+	<div id="display"><canvas id="display-canvas"></canvas></div>
 	<textarea id="input-text">Example</textarea>
 	</div>
 
@@ -38,8 +39,8 @@
 		<!-- <input type="number" id="songIntroBars" value="0"> -->
 		<!-- <input type="number" id="songIntroBars" value="0"> -->
 		<line class="gray"></line>
-		<div class="settings"><label>Beats Per Bar:</label><input type="number" id="songBeatsPerBar" value="8"></div>
-		<div class="settings"><label>Ticks Per Beat:</label><input type="number" id="songTicksPerBeat" value="4"></div>
+		<div class="settings"><label>Ticks Per Beat:</label><input min="2" type="number" id="songTicksPerBeat" value="4"></div>
+		<div class="settings"><label>Beats Per Bar:</label><input min="1" type="number" id="songBeatsPerBar" value="8"></div>
 		<!-- <div class="settings"><label>Reverb:</label><input type="number" id="songReverb" value="50"></div> -->
 		<div class="settings"><label>Tick lenght:</label><input type="number" id="tickLenght" value="2"></div>
 		<line class="gray"></line>

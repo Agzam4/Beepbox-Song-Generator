@@ -69,6 +69,20 @@ input:focus, button:hover, select:hover {
     box-shadow: 0 0 0 3px var(--color-border-action);
 }
 
+#display {
+	width: 60vw;
+	height: 40vh;
+	background: var(--color-bg-light);
+	overflow-y: hidden;
+	overflow-x: auto;
+	margin-bottom: 4vh;
+}
+
+#display > canvas {
+	/*height: 30px;*/
+	/*width: 100px;*/
+}
+
 #editor {
 	height: 100vh;
 }
