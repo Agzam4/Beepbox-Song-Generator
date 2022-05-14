@@ -3,6 +3,8 @@ const morseCharsEncode = `.---- ..--- ...-- ....- ..... -.... --... ---.. ----. 
 
 let generatorRepeatPattern = 1; 
 let generatorScale = 0; 
+let generatorFillGaps = false;
+let generatorFillGapsKey = 1;
 
 let songStartKey = 48;
 
@@ -26,32 +28,273 @@ let scaleKeys = [
 
 let display;
 
+let playPosition = 0;
+let playInterval = 0;
+let isPlaying = false;
+
 window.onload = function() {
     display = document.getElementById('display-canvas');
 
     document.title = `BeepBox Song Generator | "` + songName + `"`;
+
+    document.onkeypress = function(e) {  
+        if(e.code == 'Space' && e.target == document.body) {
+            e.preventDefault();
+        }
+        console.log(e.target);
+        if(e.code == 'Space' 
+            && e.target.tagName != 'TEXTAREA'
+            && e.target.tagName != 'INPUT') {
+            isPlaying = !isPlaying;
+        }
+        console.log(e.code);
+    }
+
+    document.getElementById('input-text').oninput = function() {
+        updateSong();
+    }
+
     document.getElementById('songName').oninput = function() {
         songName = this.value
         document.title = `BeepBox Song Generator | "` + songName + `"`;
     };
-    document.getElementById('songKey').onchange = function() {songKey = this.options[this.selectedIndex].text};
-    document.getElementById('songBeatsPerBar').oninput = function() {songBeatsPerBar = Math.max(2, this.value); updateTickLenght()};
-    document.getElementById('songTicksPerBeat').oninput = function() {songTicksPerBeat = Math.max(2, this.value); updateTickLenght()};
-    document.getElementById('songBeatsPerMinute').oninput = function() {songBeatsPerMinute = this.value};
+    document.getElementById('songKey').onchange = function() {
+        songKey = this.options[this.selectedIndex].text;
+        updateSong();
+    };
+    document.getElementById('songBeatsPerBar').oninput = function() {
+        songBeatsPerBar = Math.max(2, this.value);
+        updateTickLenght();
+        updateSong();
+     };
+    document.getElementById('songTicksPerBeat').oninput = function() {
+        songTicksPerBeat = Math.max(2, this.value);
+        updateTickLenght();
+        updateSong();
+    };
+    document.getElementById('songBeatsPerMinute').oninput = function() {
+        songBeatsPerMinute = this.value;
+        updateSong();
+    };
     // document.getElementById('songReverb').oninput = function() {songReverb = this.value};
-    document.getElementById('tickLenght').oninput = function() {updateTickLenght()};
+    document.getElementById('tickLenght').oninput = function() {
+        updateTickLenght();
+        updateSong();
+    };
 
-    document.getElementById('generatorRepeatPattern').oninput = function() { generatorRepeatPattern = this.value};
-    document.getElementById('generatorScale').onchange = function() {generatorScale = this.selectedIndex};
-    setInterval(updateDisplay, 100);
+    document.getElementById('generatorRepeatPattern').oninput = function() { 
+        generatorRepeatPattern = this.value;
+        updateSong();
+    };
+    document.getElementById('generatorScale').onchange = function() {
+        generatorScale = this.selectedIndex;
+        updateSong();
+    };
+    document.getElementById('generatorFillGaps').onchange = function() {
+        generatorFillGaps = this.checked;
+        document.getElementById('generatorFillGapsKey').disabled = !this.checked;
+        updateSong();
+    };
+
+    document.getElementById('generatorFillGapsKey').oninput = function() { 
+        generatorFillGapsKey = this.value;
+        updateSong();
+    };
+
+
+
+
+
+    setInterval(updateDisplay, 10);
+
+
+    updateSong();
+    setInterval(playSong, 10);
+}
+
+function updateSong() {
+    crateNotes();
 }
 
 function updateKey() {
 
 }
 
+
+//   
+//      ##############          ##                  ##############      ##          ##
+//      ##          ##          ##                  ##          ##      ##          ##
+//      ##          ##          ##                  ##          ##      ##          ##
+//      ##          ##          ##                  ##          ##      ##          ##
+//      ##          ##          ##                  ##          ##      ##          ##
+//      ##          ##          ##                  ##          ##      ##          ##
+//      ##############          ##                  ##############      ##############
+//      ##                      ##                  ##          ##                  ##
+//      ##                      ##                  ##          ##                  ##
+//      ##                      ##                  ##          ##                  ##
+//      ##                      ##                  ##          ##                  ##
+//      ##                      ##                  ##          ##                  ##
+//      ##                      ##############      ##          ##      ##############
+//
+
+
+let playTimer = 0;
+let playLast = 0;
+function playSong() {
+      // playNote(392.0, 'sine'); 
+      // playNote(392.0, 'square'); 
+      // playNote(392.0, 'triangle'); 
+      // playNote(392.0, 'sawtooth'); 
+
+    // let context = new AudioContext();
+    // let o = context.createOscillator();
+    // let g = context.createGain();
+    // o.type = 'square';
+    // o.connect(g);
+    // o.start(0);
+    // for (var i = 0; i < notes.length; i++) {
+    //     playNote(notes[i], i * interval);
+    // }
+    // var notes = [392, 2794, 100];
+    // for (var i = 0; i < notes.length; i++) {
+    //     playNote(notes[i], i * interval);
+    // }
+
+    // for (var i = 0; i < songNotes.length; i++) {
+    //     let note = songNotes[i];
+    //     if(note != null)
+    //         // playNote(frequencyFromPitch(songStartKey + note), 'sawtooth', i * interval);
+    //         setTimeout(playNote(frequencyFromPitch(songStartKey + note), 'sawtooth', i * interval), i*1000);
+    // }
+    // setTimeout(function() {o.end()}, songNotes.length*1000);
+
+    /*
+        150 beat/minute    songBeatsPerMinute
+        2 tick/beat         songTicksPerBeat
+
+        150 beat/minute * 2 tick/beat = 300 tick/minute
+    */
+    if(isPlaying) playTimer += 10;
+
+    /*
+
+        1000 = 1*songTicksPerBeat (beat/sec) = 60*songTicksPerBeat  (beat/min)
+        2000 = 2*songTicksPerBeat (beat/sec) = 120*songTicksPerBeat (beat/min)
+
+        100*time = 6*songTicksPerBeat
+        100*time = 6*songTicksPerBeat
+        time = 6*songTicksPerBeat/100
+
+        600  = 0.6   beat/sec = 100 beat/min
+        6    = 0.006 beat/sec = 1   beat/min
+
+        60 b/m = 1b/s
+        
+    */
+    playInterval = 1000/(songBeatsPerMinute/60)/songTicksPerBeat; //songBeatsPerMinute * songTicksPerBeat * songBeatsPerBar / 6
+    // 6*
+    ///songTicksPerBeat
+
+    if(playTimer > playInterval){
+        playTimer -= playInterval;
+        play();
+
+        //playPosition = Math.floor(playTimer/2/playInterval);
+        // playTimer -= playInterval;
+        //if(playLast != playPosition) play();
+        //playLast = playPosition;
+    }
+    // playInterval = 60 / songTicksPerBeat*songBeatsPerMinute / 10;
+    // console.log(playInterval, playPosition);
+    // setTimeout(playSong, playInterval);
+}
+
+let audio = new AudioContext();
+
+function createOscillator(frequency, type) {
+    var osc = audio.createOscillator();
+
+    osc.frequency.value = frequency;
+    osc.type = type;
+    osc.connect(audio.destination);
+    osc.start(0);
+
+    setTimeout(function() {
+        osc.stop(0);
+        osc.disconnect(audio.destination);
+    }, playInterval)
+}
+
+function play() {
+    var note = songNotes[playPosition];
+    if(note == null || note == undefined) {
+        playNextNote();
+        return;
+    }
+    freq = frequencyFromPitch(note + songStartKey);
+    if(freq) {
+        // createOscillator(freq, 'triangle');
+        // createOscillator(freq, 'square');
+
+        createOscillator(freq, 'square');
+        createOscillator(freq, 'triangle');
+        createOscillator(freq, 'sawtooth');
+      // playNote(392.0, 'sine'); 
+      // playNote(392.0, 'square'); 
+      // playNote(392.0, 'triangle'); 
+      // playNote(392.0, 'sawtooth'); 
+    }
+    playNextNote();
+}
+
+function playNextNote() {
+    playPosition += 1;
+    if(playPosition >= songNotes.length) {
+        playPosition = 0;
+    }
+}
+
+function frequencyFromPitch(pitch) {
+    return 440.0 * Math.pow(2.0, (pitch - 69.0) / 12.0);
+}
+
+
+// function playNote(frequency, type) {
+//   let context=new AudioContext();
+//   let o=null;
+//   let g=null;
+//   setTimeout(function(){
+//     o = context.createOscillator();
+//       g = context.createGain();
+//       o.type = type;
+//       o.connect(g);
+//       o.frequency.value = frequency;
+//       g.connect(context.destination);
+//       o.start(0);
+//       g.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 1);
+//   },1000);
+// }
+
+
+
+//   
+//      ##############          ##############      ##############      ##          ##
+//      ##          ##          ##          ##      ##          ##      ##          ##
+//      ##            ##        ##          ##      ##          ##      ##          ##
+//      ##            ##        ##          ##      ##          ##      ##          ##
+//      ##              ##      ##          ##      ##          ##      ##          ##
+//      ##              ##      ##          ##      ##          ##      ##          ##
+//      ##              ##      ##############      ##############      ##          ##
+//      ##              ##      ##  ##              ##          ##      ##          ##
+//      ##              ##      ##    ##            ##          ##      ##    ##    ##
+//      ##            ##        ##      ##          ##          ##      ##  ##  ##  ##
+//      ##            ##        ##       ##         ##          ##      ##  ##  ##  ##
+//      ##          ##          ##        ##        ##          ##      ##  ##  ##  ##
+//      ##############          ##          ##      ##          ##      ####      ####
+//
+
+
 function updateDisplay() {
-    crateNotes();
 
     let ticksPerBar = songTicksPerBeat*songBeatsPerBar;
     let g = display.getContext('2d');
@@ -66,18 +309,13 @@ function updateDisplay() {
 
     let h = height/15;
 
+    let playPositionX = playPosition + playTimer/playInterval;
+
     g.fillStyle = "#000";
     g.fillRect(0, 0, width, height);
 
     g.fillStyle = "#222";
     g.fillRect(0, h, width, height-h*3);
-
-    g.fillStyle = "#25F3FF";
-    for (var i = 0; i < songNotes.length; i++) {
-        let note = songNotes[i];
-        if(note != null)
-        g.fillRect(w*i + Math.floor(i/ticksPerBar)*barPadding, h*(note), w, h);
-    }
 
     g.strokeStyle = "#555";
     g.beginPath();
@@ -89,7 +327,7 @@ function updateDisplay() {
 
     g.strokeStyle = "#777";
     g.beginPath();
-    for (var i = 0; i < songNotes.length; i+=songTicksPerBeat) {
+    for (var i = 0; i <= songNotes.length; i+=songTicksPerBeat) {
         g.moveTo(w*i + Math.floor(i/ticksPerBar)*barPadding, h);
         g.lineTo(w*i + Math.floor(i/ticksPerBar)*barPadding, height-2*h);
     }
@@ -110,6 +348,7 @@ function updateDisplay() {
         // g.moveTo(w*i + Math.floor(i/ticksPerBar)*barPadding, h);
         // g.lineTo(w*i + Math.floor(i/ticksPerBar)*barPadding, height-2*h);
     }
+
     g.stroke();
 
     // Scale
@@ -117,7 +356,31 @@ function updateDisplay() {
     g.fillStyle = "#000000AA";
     for (var i = 1; i <= 12; i++) {
         if(scaleKeys[generatorScale].indexOf(i) == -1)
-        g.fillRect(0, i*h, width, h);
+        g.fillRect(0, height - (i+2)*h, width, h);
+    }
+
+    // Play
+    let playX = playPositionX*w + Math.floor(playPosition/ticksPerBar)*barPadding;//*ticksPerBar*w + (playPosition-1)*barPadding;
+    g.fillStyle = "#FFF";
+    g.fillRect(playX-2, h, 2, height-3*h);
+    g.fillStyle = "#FFFFFF33";
+    g.fillRect(0, h, playX, height-3*h);
+
+    for (var i = 0; i < songNotes.length; i++) {
+        let note = songNotes[i];
+        let gray = 1-Math.min(1, Math.max(0, (playPositionX-i)/10));
+        // 37   243 255
+        // 218  12  0
+        // 
+        // g.fillStyle = 'rgb(' + (37 + 218*gray) + ',' + (243 + 12*gray) + ', 255)';
+        g.fillStyle = 'hsl(183deg 100% ' + (57+43*gray) + '%)';
+        let sizeK = Math.sin(playPositionX-i)*gray;
+        if(playPositionX < i) {
+            g.fillStyle = '#25F3FF';
+            sizeK = 0;
+        }
+        if(note != null)
+        g.fillRect(w*i + Math.floor(i/ticksPerBar)*barPadding, height - h*(note+2) + sizeK*h, w, h);
     }
 }
 
@@ -156,6 +419,23 @@ function updateTickLenght() {
     //Math.round(songTicksPerBeat/tl.value)*tl.value/(songBeatsPerBar*songTicksPerBeat);
 }
 
+//   
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//      #####################################################################################
+//
+
+
 function crateNotes() {
     let text = document.getElementById('input-text').value.toUpperCase();
     songNotes = [];
@@ -173,7 +453,7 @@ function crateNotes() {
                         songNotes.push(scaleKeys[generatorScale][charKey]);
                         songNotes.push(scaleKeys[generatorScale][charKey]);
                     }
-                    songNotes.push(null);
+                    songNotes.push(generatorFillGaps ? (generatorFillGapsKey-0) : null);
                 }
             }
         }

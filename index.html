@@ -46,7 +46,6 @@
 		<line class="gray"></line>
 		<div class="settings"><label>Beats Per Minute:</label><input min="1" type="number" id="songBeatsPerMinute" value="150"></div>
 
-
 		<h2>Generator settings</h2>
 		<line></line>
 		<div class="settings"><label>Scale:</label><select id="generatorScale">
@@ -59,6 +58,11 @@
 			<option value="Soon" disabled>Soon</option>
 		</select></div>
 		<div class="settings"><label>Repeat letter pattern:</label><input type="number" min="1" id="generatorRepeatPattern" value="1"></div>
+		<div class="settings"><label>Fill gaps:</label><input id="generatorFillGaps" type="checkbox"></div>
+		<div class="settings">
+			<label>Fill gaps key:</label><input id="generatorFillGapsKey" type="number" value="1" min="1" max="12" disabled>
+		</div>
+
 	</div>
 	<div class="song-file-box">
 		<button onclick="generate()">Export Song</button>
