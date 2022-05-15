@@ -117,7 +117,7 @@ window.onload = function() {
 
 let rotateDevice = null;
 function updateLayout() {
-    rotateDevice.classList = screen.orientation.angle == 0 ? "hidden" : "";
+    rotateDevice.classList = window.innerWidth/window.innerHeight > 0.8 ? "hidden" : "";
 }
 
 
