@@ -21,10 +21,31 @@ html {
 	background: var(--color-bg);
 	color: var(--color-fg);
 	transition: background .2s ease-in-out, color .2s ease-in-out;
+
+	/*font-size: 3vw;*/
 }
 
 body {
 	margin: 0;
+}
+
+#rotate-device {
+	font-size: 5vw;
+	z-index: 10000;
+	width: 100vw;
+	height: 100vh;
+	background: var(--color-bg);
+	position: fixed;
+	top: 0;
+	left: 0;
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
+}
+
+#rotate-device.hidden {
+	pointer-events: none;
+	opacity: 0;
 }
 
 *::-webkit-scrollbar {

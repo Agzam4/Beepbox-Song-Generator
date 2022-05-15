@@ -110,7 +110,16 @@ window.onload = function() {
 
     updateSong();
     setInterval(playSong, 10);
+
+    rotateDevice = document.getElementById('rotate-device');
+    setInterval(updateLayout, 100);
 }
+
+let rotateDevice = null;
+function updateLayout() {
+    rotateDevice.classList = screen.orientation.angle == 0 ? "hidden" : "";
+}
+
 
 function updateSong() {
     crateNotes();
@@ -191,7 +200,7 @@ function playSong() {
         60 b/m = 1b/s
         
     */
-    playInterval = 1000/(songBeatsPerMinute/60)/songTicksPerBeat; //songBeatsPerMinute * songTicksPerBeat * songBeatsPerBar / 6
+    playInterval = 1000/(songBeatsPerMinute/60)/songTicksPerBeat * tickLenght; //songBeatsPerMinute * songTicksPerBeat * songBeatsPerBar / 6
     // 6*
     ///songTicksPerBeat
 
@@ -300,14 +309,15 @@ function updateDisplay() {
     let g = display.getContext('2d');
     display.height = display.parentElement.offsetHeight;
 
-    let w = 20;
-    let barPadding = 10;
-    display.width = songNotes.length*w + ticksPerBar;
-
-    let width = display.width;
     let height = display.height;
 
     let h = height/15;
+
+    let w = h;
+    let barPadding = 10;
+    display.width = songNotes.length*w*tickLenght + ticksPerBar;
+
+    let width = display.width;
 
     let playPositionX = playPosition + playTimer/playInterval;
 
@@ -327,7 +337,7 @@ function updateDisplay() {
 
     g.strokeStyle = "#777";
     g.beginPath();
-    for (var i = 0; i <= songNotes.length; i+=songTicksPerBeat) {
+    for (var i = 0; i <= songNotes.length*tickLenght; i+=songTicksPerBeat) {
         g.moveTo(w*i + Math.floor(i/ticksPerBar)*barPadding, h);
         g.lineTo(w*i + Math.floor(i/ticksPerBar)*barPadding, height-2*h);
     }
@@ -345,8 +355,6 @@ function updateDisplay() {
 
         g.fillStyle = "#555";
         g.fillText(" Bar #" + i, x - ticksPerBar*w, h*1.75);
-        // g.moveTo(w*i + Math.floor(i/ticksPerBar)*barPadding, h);
-        // g.lineTo(w*i + Math.floor(i/ticksPerBar)*barPadding, height-2*h);
     }
 
     g.stroke();
@@ -360,7 +368,7 @@ function updateDisplay() {
     }
 
     // Play
-    let playX = playPositionX*w + Math.floor(playPosition/ticksPerBar)*barPadding;//*ticksPerBar*w + (playPosition-1)*barPadding;
+    let playX = playPositionX*w*tickLenght + Math.floor(playPosition*tickLenght/ticksPerBar)*barPadding;//*ticksPerBar*w + (playPosition-1)*barPadding;
     g.fillStyle = "#FFF";
     g.fillRect(playX-2, h, 2, height-3*h);
     g.fillStyle = "#FFFFFF33";
@@ -369,10 +377,6 @@ function updateDisplay() {
     for (var i = 0; i < songNotes.length; i++) {
         let note = songNotes[i];
         let gray = 1-Math.min(1, Math.max(0, (playPositionX-i)/10));
-        // 37   243 255
-        // 218  12  0
-        // 
-        // g.fillStyle = 'rgb(' + (37 + 218*gray) + ',' + (243 + 12*gray) + ', 255)';
         g.fillStyle = 'hsl(183deg 100% ' + (57+43*gray) + '%)';
         let sizeK = Math.sin(playPositionX-i)*gray;
         if(playPositionX < i) {
@@ -380,7 +384,7 @@ function updateDisplay() {
             sizeK = 0;
         }
         if(note != null)
-        g.fillRect(w*i + Math.floor(i/ticksPerBar)*barPadding, height - h*(note+2) + sizeK*h, w, h);
+        g.fillRect(w*i*tickLenght + Math.floor(i*tickLenght/ticksPerBar)*barPadding, height - h*(note+2) + sizeK*h, w*tickLenght, h);
     }
 }
 
